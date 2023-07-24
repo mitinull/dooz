@@ -29,6 +29,27 @@ io.on("connection", function (socket) {
   });
   io.emit("users", connectedUsers);
 
+  socket.on("invite", (id) => {
+    console.log(socket.id, "invited", id);
+
+    // Send a message to invitedUser
+    const invitedUserSocket = io.sockets.sockets.get(id);
+    invitedUserSocket.emit("invite", {
+      name: socket.handshake.query.name,
+      id: socket.id,
+    });
+  });
+
+  socket.on("acceptInvite", (id) => {
+    console.log(socket.id, "acceptInvited", id);
+    socket.data.opponentId = id;
+
+    const acceptInvitedUserSocket = io.sockets.sockets.get(id);
+    acceptInvitedUserSocket.data.opponentId = socket.id;
+
+    acceptInvitedUserSocket.emit("acceptInvite");
+  });
+
   socket.on("disconnect", () => {
     const disconnectedUserIndex = connectedUsers.findIndex(
       (user) => user.id === socket.id
@@ -39,7 +60,10 @@ io.on("connection", function (socket) {
   });
 
   socket.on("click", (cellIndex) => {
-    console.log("clicked", cellIndex);
-    io.emit("click", cellIndex);
+    if (!socket.data.opponentId) return;
+    console.log("clicked", socket.data.opponentId, cellIndex);
+    opponentSocket = io.sockets.sockets.get(socket.data.opponentId);
+    socket.emit("click", cellIndex);
+    opponentSocket.emit("click", cellIndex);
   });
 });

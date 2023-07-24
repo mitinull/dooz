@@ -19,6 +19,18 @@ cells.forEach((cell, i) => {
   });
 });
 
+socket.on("invite", (opponent) => {
+  alert("You are invited. congrats!🎉");
+  console.log(opponent.name);
+  socket.emit("acceptInvite", opponent.id);
+});
+
+let shape = "circle";
+
+socket.on("acceptInvite", () => {
+  alert("You're invite is accepted. congrats!🎉");
+});
+
 socket.on("users", (users) => {
   console.log(users);
   usersContainer.innerHTML = "";
@@ -31,6 +43,7 @@ socket.on("users", (users) => {
     button.addEventListener("click", () => {
       console.log(user.name, user.id);
       button.innerText = "Invited";
+      socket.emit("invite", user.id);
     });
 
     const row = document.createElement("div");
@@ -42,5 +55,6 @@ socket.on("users", (users) => {
 });
 
 socket.on("click", (cellIndex) => {
-  cells[cellIndex].classList.add("circle");
+  cells[cellIndex].textContent = shape;
+  shape = shape === "circle" ? "cross" : "circle";
 });
