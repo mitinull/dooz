@@ -23,11 +23,12 @@ const io = socket(server);
 
 io.on("connection", function (socket) {
   console.log("Made socket connection");
-  connectedUsers.push({
-    id: socket.id,
-    name: socket.handshake.query.name,
-  });
-  io.emit("users", connectedUsers);
+  socket.data.name = socket.handshake.query.name;
+  const namesArray = [];
+  io.sockets.sockets.forEach((socket) =>
+    namesArray.push({ name: socket.data.name, id: socket.id })
+  );
+  io.emit("users", namesArray);
 
   socket.on("invite", (id) => {
     console.log(socket.id, "invited", id);
