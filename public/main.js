@@ -9,26 +9,59 @@ const socket = io({
   },
 });
 
+const boardPage = document.querySelector(".board-page");
 const cells = document.querySelectorAll(".cell");
-
+const usersPage = document.querySelector(".users-page");
 const usersContainer = document.querySelector(".users");
+const leaveButton = document.querySelector(".leave-button");
+
+const goToListPage = () => {
+  boardPage.style.display = "none";
+  usersPage.style.display = "block";
+};
+
+const goToBoardPage = () => {
+  boardPage.style.display = "block";
+  usersPage.style.display = "none";
+  cells.forEach((cell) => {
+    cell.textContent = "";
+  });
+};
+
+leaveButton.addEventListener("click", () => {
+  goToListPage();
+  socket.emit("leave");
+});
+
+let currentShape = "O";
+let playerShape = "";
 
 cells.forEach((cell, i) => {
   cell.addEventListener("click", () => {
+    if (playerShape !== currentShape) return;
+    if (cells[i].innerHTML !== "") return;
     socket.emit("click", i);
   });
 });
 
 socket.on("invite", (opponent) => {
-  alert("You are invited. congrats!🎉");
+  const accept = confirm(
+    `You are invited by "${opponent.name}". Do you want to play?`
+  );
+  if (!accept) {
+    socket.emit("dennyInvite", opponent.id);
+    return;
+  }
   console.log(opponent.name);
   socket.emit("acceptInvite", opponent.id);
+  playerShape = "X";
+  goToBoardPage();
 });
-
-let shape = "circle";
 
 socket.on("acceptInvite", () => {
   alert("You're invite is accepted. congrats!🎉");
+  playerShape = "O";
+  goToBoardPage();
 });
 
 socket.on("users", (users) => {
@@ -47,6 +80,7 @@ socket.on("users", (users) => {
     });
 
     const row = document.createElement("div");
+    row.className = "user";
     row.insertAdjacentElement("beforeend", name);
     row.insertAdjacentElement("beforeend", button);
 
@@ -55,6 +89,6 @@ socket.on("users", (users) => {
 });
 
 socket.on("click", (cellIndex) => {
-  cells[cellIndex].textContent = shape;
-  shape = shape === "circle" ? "cross" : "circle";
+  cells[cellIndex].textContent = currentShape;
+  currentShape = currentShape === "O" ? "X" : "O";
 });

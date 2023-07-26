@@ -1,12 +1,18 @@
 const express = require("express");
 const socket = require("socket.io");
+const rateLimit = require("express-rate-limit");
 
 const expressApp = express();
 
+const limiter = rateLimit({
+  windowMs: 1000,
+  max: 5,
+});
+
 expressApp.set("view engine", "ejs");
 expressApp.use(express.static("public"));
-
 expressApp.use(express.static(__dirname + "/public"));
+expressApp.use(limiter);
 
 expressApp.get("/", (req, res) => {
   console.log("Root__Get!");
@@ -30,11 +36,14 @@ io.on("connection", function (socket) {
   );
   io.emit("users", namesArray);
 
+  let i = 0;
   socket.on("invite", (id) => {
     console.log(socket.id, "invited", id);
+    console.log(++i);
 
     // Send a message to invitedUser
     const invitedUserSocket = io.sockets.sockets.get(id);
+    if (!invitedUserSocket) return;
     invitedUserSocket.emit("invite", {
       name: socket.handshake.query.name,
       id: socket.id,

@@ -5,11 +5,39 @@
 body {
   padding: 15px 30px;
   background: wheat;
+  font-family: sans-serif;
 }
 
 h1 {
   margin-bottom: 10px;
   color: #111;
+  font-family: initial;
+}
+
+h3 {
+  margin-bottom: 7px;
+}
+
+.users-message {
+  margin-bottom: 12px;
+  max-width: 300px;
+}
+
+.user {
+  margin-bottom: 5px;
+  display: flex;
+  gap: 5px;
+}
+
+.user button {
+  background: transparent;
+  padding: 1px 8px;
+  border: 1px solid #333;
+  border-radius: 100px;
+}
+
+.board-page {
+  display: none;
 }
 
 .board {
@@ -23,6 +51,10 @@ h1 {
   color: wheat;
   height: 80px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
 }
 
 .cell.circle::before {
