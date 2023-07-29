@@ -38,8 +38,8 @@ io.on("connection", function (socket) {
 
   let i = 0;
   socket.on("invite", (id) => {
-    console.log(socket.id, "invited", id);
-    console.log(++i);
+    console.log(socket.handshake.query.name, "invited", id);
+    console.log("Invite number:", ++i);
 
     // Send a message to invitedUser
     const invitedUserSocket = io.sockets.sockets.get(id);
@@ -51,7 +51,7 @@ io.on("connection", function (socket) {
   });
 
   socket.on("acceptInvite", (id) => {
-    console.log(socket.id, "acceptInvited", id);
+    console.log(socket.handshake.query.name, "acceptInvited", id);
     socket.data.opponentId = id;
 
     const acceptInvitedUserSocket = io.sockets.sockets.get(id);
@@ -71,7 +71,6 @@ io.on("connection", function (socket) {
 
   socket.on("click", (cellIndex) => {
     if (!socket.data.opponentId) return;
-    console.log("clicked", socket.data.opponentId, cellIndex);
     const opponentSocket = io.sockets.sockets.get(
       socket.data.opponentId
     );
@@ -80,7 +79,6 @@ io.on("connection", function (socket) {
   });
 
   socket.on("chat", (message) => {
-    console.log(message);
     const opponentSocket = io.sockets.sockets.get(
       socket.data.opponentId
     );
