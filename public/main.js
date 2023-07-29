@@ -17,6 +17,7 @@ const leaveButton = document.querySelector(".leave-button");
 const chatForm = document.querySelector("#chat-form");
 const chatInput = document.querySelector("#chat-input");
 const chatsContainer = document.querySelector("#chats");
+const turnHeading = document.querySelector("#turn");
 
 const goToListPage = () => {
   boardPage.style.display = "none";
@@ -47,6 +48,7 @@ chatForm.addEventListener("submit", (e) => {
 
 let currentShape = "O";
 let playerShape = "";
+let opponentName = "";
 
 cells.forEach((cell, i) => {
   cell.addEventListener("click", () => {
@@ -64,6 +66,8 @@ socket.on("chat", (message) => {
 });
 
 socket.on("invite", (opponent) => {
+  currentShape = "O";
+  opponentName = opponent.name;
   const accept = confirm(
     `You are invited by "${opponent.name}". Do you want to play?`
   );
@@ -74,12 +78,18 @@ socket.on("invite", (opponent) => {
   console.log(opponent.name);
   socket.emit("acceptInvite", opponent.id);
   playerShape = "X";
+  turnHeading.innerHTML = `${opponentName}'s Turn ...`;
   goToBoardPage();
 });
 
-socket.on("acceptInvite", () => {
-  alert("You're invite is accepted. congrats!🎉");
+socket.on("acceptInvite", (opponent) => {
+  currentShape = "O";
+  opponentName = opponent.name;
+  alert(
+    `You're invite is accepted by "${opponent.name}". congrats!🎉`
+  );
   playerShape = "O";
+  turnHeading.innerHTML = "Your Turn!";
   goToBoardPage();
 });
 
@@ -110,4 +120,8 @@ socket.on("users", (users) => {
 socket.on("click", (cellIndex) => {
   cells[cellIndex].textContent = currentShape;
   currentShape = currentShape === "O" ? "X" : "O";
+  turnHeading.innerHTML =
+    currentShape === playerShape
+      ? "Your Turn!"
+      : `${opponentName}'s Turn ...`;
 });

@@ -1,3 +1,6 @@
++ turn
 - add winner looser
 + add chat
 - add Ai(Ali Irani) and bot(Barbod Omme Tal...)
+- add animation
+  - on go to board page

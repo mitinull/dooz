@@ -57,7 +57,9 @@ io.on("connection", function (socket) {
     const acceptInvitedUserSocket = io.sockets.sockets.get(id);
     acceptInvitedUserSocket.data.opponentId = socket.id;
 
-    acceptInvitedUserSocket.emit("acceptInvite");
+    acceptInvitedUserSocket.emit("acceptInvite", {
+      name: socket.handshake.query.name,
+    });
   });
 
   socket.on("disconnect", () => {
