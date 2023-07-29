@@ -14,6 +14,8 @@
     <h1>DOOZ IS LIFE!</h1>
 
     <div class="board-page">
+      <div class="playing-info"></div>
+      <button class="leave-button">leave</button>
       <div class="board">
         <div class="cell"></div>
         <div class="cell"></div>
@@ -25,12 +27,17 @@
         <div class="cell"></div>
         <div class="cell"></div>
       </div>
-      <div class="playing-info"></div>
-      <button class="leave-button">leave</button>
+      <form id="chat-form">
+        <input type="text" id="chat-input" />
+        <button>send</button>
+      </form>
+      <div id="chats"></div>
     </div>
 
     <div class="users-page">
-      <h4 class="users-message">Tell your friends to visit the website and play together!</h4>
+      <h4 class="users-message">
+        Tell your friends to visit the website and play together!
+      </h4>
       <h3>online users:</h3>
       <div class="users"></div>
     </div>

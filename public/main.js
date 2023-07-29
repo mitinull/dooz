@@ -14,6 +14,9 @@ const cells = document.querySelectorAll(".cell");
 const usersPage = document.querySelector(".users-page");
 const usersContainer = document.querySelector(".users");
 const leaveButton = document.querySelector(".leave-button");
+const chatForm = document.querySelector("#chat-form");
+const chatInput = document.querySelector("#chat-input");
+const chatsContainer = document.querySelector("#chats");
 
 const goToListPage = () => {
   boardPage.style.display = "none";
@@ -33,6 +36,14 @@ leaveButton.addEventListener("click", () => {
   socket.emit("leave");
 });
 
+chatForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const message = chatInput.value;
+  if (!message) return;
+  chatInput.value = "";
+  socket.emit("chat", message);
+});
+
 let currentShape = "O";
 let playerShape = "";
 
@@ -42,6 +53,13 @@ cells.forEach((cell, i) => {
     if (cells[i].innerHTML !== "") return;
     socket.emit("click", i);
   });
+});
+
+socket.on("chat", (message) => {
+  chatsContainer.insertAdjacentHTML(
+    "beforeend",
+    `<div>${message}</div>`
+  );
 });
 
 socket.on("invite", (opponent) => {

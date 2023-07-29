@@ -72,8 +72,24 @@ io.on("connection", function (socket) {
   socket.on("click", (cellIndex) => {
     if (!socket.data.opponentId) return;
     console.log("clicked", socket.data.opponentId, cellIndex);
-    opponentSocket = io.sockets.sockets.get(socket.data.opponentId);
+    const opponentSocket = io.sockets.sockets.get(
+      socket.data.opponentId
+    );
     socket.emit("click", cellIndex);
     opponentSocket.emit("click", cellIndex);
+  });
+
+  socket.on("chat", (message) => {
+    console.log(message);
+    const opponentSocket = io.sockets.sockets.get(
+      socket.data.opponentId
+    );
+
+    if (!opponentSocket) return;
+
+    const formattedMessage =
+      `<b>${socket.handshake.query.name}:</b> ` + message;
+    socket.emit("chat", formattedMessage);
+    opponentSocket.emit("chat", formattedMessage);
   });
 });
