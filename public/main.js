@@ -29,6 +29,7 @@ const goToBoardPage = () => {
   cells.forEach((cell) => {
     cell.textContent = "";
   });
+  chatsContainer.innerHTML = "";
 };
 
 leaveButton.addEventListener("click", () => {
