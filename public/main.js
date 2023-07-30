@@ -1,3 +1,5 @@
+import { winnerCells } from "./winnerCells.js";
+
 if (!localStorage.getItem("name")) {
   const name = prompt("Enter your beautiful name:");
   localStorage.setItem("name", name);
@@ -27,8 +29,10 @@ const goToListPage = () => {
 const goToBoardPage = () => {
   boardPage.style.display = "block";
   usersPage.style.display = "none";
+  gameIsOver = false;
   cells.forEach((cell) => {
     cell.textContent = "";
+    cell.style.background = "#111";
   });
   chatsContainer.innerHTML = "";
 };
@@ -49,11 +53,13 @@ chatForm.addEventListener("submit", (e) => {
 let currentShape = "O";
 let playerShape = "";
 let opponentName = "";
+let gameIsOver = false;
 
 cells.forEach((cell, i) => {
   cell.addEventListener("click", () => {
     if (playerShape !== currentShape) return;
     if (cells[i].innerHTML !== "") return;
+    if (gameIsOver) return;
     socket.emit("click", i);
   });
 });
@@ -120,8 +126,26 @@ socket.on("users", (users) => {
 socket.on("click", (cellIndex) => {
   cells[cellIndex].textContent = currentShape;
   currentShape = currentShape === "O" ? "X" : "O";
-  turnHeading.innerHTML =
-    currentShape === playerShape
-      ? "Your Turn!"
-      : `${opponentName}'s Turn ...`;
+  const winnerResult = winnerCells(cells);
+  if (!winnerResult) {
+    turnHeading.innerHTML =
+      currentShape === playerShape
+        ? "Your Turn!"
+        : `${opponentName}'s Turn ...`;
+  } else {
+    gameIsOver = true;
+    if (winnerResult === "draw") {
+      turnHeading.innerHTML = "DRAW. :|";
+    } else if (winnerResult.winner === playerShape) {
+      turnHeading.innerHTML = "YOU WON! :)";
+      for (let i of winnerResult.cells) {
+        cells[i].style.background = "green";
+      }
+    } else {
+      turnHeading.innerHTML = "YOU LOST. :(";
+      for (let i of winnerResult.cells) {
+        cells[i].style.background = "red";
+      }
+    }
+  }
 });
