@@ -3,5 +3,7 @@
 - play again
 + add chat
 - add Ai(Ali Irani) and bot(Barbod Omme Tal...)
+- change name feature
+- fix invite
 - add animation
   - on go to board page
