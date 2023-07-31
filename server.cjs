@@ -62,6 +62,18 @@ io.on("connection", function (socket) {
     });
   });
 
+  socket.on("inviteAgain", () => {
+    const opponentSocket = io.sockets.sockets.get(
+      socket.data.opponentId
+    );
+    if (!opponentSocket) return;
+
+    opponentSocket.emit("invite", {
+      name: socket.handshake.query.name,
+      id: socket.id,
+    });
+  });
+
   socket.on("disconnect", () => {
     const disconnectedUserIndex = connectedUsers.findIndex(
       (user) => user.id === socket.id

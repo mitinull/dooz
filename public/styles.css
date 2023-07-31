@@ -14,8 +14,8 @@ h1 {
   font-family: initial;
 }
 
-h3 {
-  margin-bottom: 7px;
+.users {
+  margin-top: 8px;
 }
 
 .users-message {
@@ -29,11 +29,20 @@ h3 {
   gap: 5px;
 }
 
+.user::before {
+  content: "◾";
+}
+
 .user button {
   background: transparent;
   padding: 1px 8px;
   border: 1px solid #333;
   border-radius: 100px;
+  cursor: pointer;
+}
+
+.user button:hover {
+  background: #3333;
 }
 
 .board-page {
@@ -44,6 +53,7 @@ h3 {
   display: grid;
   grid-template-columns: repeat(3, 80px);
   gap: 5px;
+  margin: 7px 0;
 }
 
 .cell {

@@ -20,6 +20,7 @@ const chatForm = document.querySelector("#chat-form");
 const chatInput = document.querySelector("#chat-input");
 const chatsContainer = document.querySelector("#chats");
 const turnHeading = document.querySelector("#turn");
+const inviteAgainButton = document.querySelector(".invite-again");
 
 const goToListPage = () => {
   boardPage.style.display = "none";
@@ -29,6 +30,7 @@ const goToListPage = () => {
 const goToBoardPage = () => {
   boardPage.style.display = "block";
   usersPage.style.display = "none";
+  inviteAgainButton.hidden = true;
   gameIsOver = false;
   cells.forEach((cell) => {
     cell.textContent = "";
@@ -40,6 +42,10 @@ const goToBoardPage = () => {
 leaveButton.addEventListener("click", () => {
   goToListPage();
   socket.emit("leave");
+});
+
+inviteAgainButton.addEventListener("click", () => {
+  socket.emit("inviteAgain");
 });
 
 chatForm.addEventListener("submit", (e) => {
@@ -103,21 +109,30 @@ socket.on("users", (users) => {
   console.log(users);
   usersContainer.innerHTML = "";
   users.forEach((user) => {
-    const name = document.createElement("span");
-    name.innerText = user.name;
+    let name;
+    let button;
 
-    const button = document.createElement("button");
-    button.innerText = "Invite";
-    button.addEventListener("click", () => {
-      console.log(user.name, user.id);
-      button.innerText = "Invited";
-      socket.emit("invite", user.id);
-    });
+    if (user.id !== socket.id) {
+      name = document.createElement("span");
+      name.innerText = user.name;
 
-    const row = document.createElement("div");
+      button = document.createElement("button");
+      button.innerText = "Invite";
+      button.addEventListener("click", () => {
+        console.log(user.name, user.id);
+        button.innerText = "Invited";
+        setTimeout(() => (button.innerText = "Invite"), 1500);
+        socket.emit("invite", user.id);
+      });
+    } else {
+      name = document.createElement("b");
+      name.innerText = user.name;
+    }
+
+    const row = document.createElement("li");
     row.className = "user";
     row.insertAdjacentElement("beforeend", name);
-    row.insertAdjacentElement("beforeend", button);
+    button && row.insertAdjacentElement("beforeend", button);
 
     usersContainer.insertAdjacentElement("afterbegin", row);
   });
@@ -134,6 +149,8 @@ socket.on("click", (cellIndex) => {
         : `${opponentName}'s Turn ...`;
   } else {
     gameIsOver = true;
+    inviteAgainButton.textContent = `Invite "${opponentName}" again!`;
+    inviteAgainButton.hidden = false;
     if (winnerResult === "draw") {
       turnHeading.innerHTML = "DRAW. :|";
     } else if (winnerResult.winner === playerShape) {

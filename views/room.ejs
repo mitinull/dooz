@@ -7,7 +7,8 @@
       content="width=device-width, initial-scale=1.0"
     />
     <link rel="stylesheet" href="styles.css" />
-    <title>Title</title>
+    <link rel="icon" href="favicon.png" />
+    <title>DOOZ / X-O</title>
   </head>
 
   <body>
@@ -17,6 +18,7 @@
       <div class="playing-info"></div>
       <button class="leave-button">leave</button>
       <h3 id="turn"></h3>
+      <button class="invite-again" hidden>Invite Again!</button>
       <div class="board">
         <div class="cell"></div>
         <div class="cell"></div>
@@ -40,7 +42,7 @@
         Tell your friends to visit the website and play together!
       </h4>
       <h3>online users:</h3>
-      <div class="users"></div>
+      <ol class="users"></ol>
     </div>
 
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
