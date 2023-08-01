@@ -2,6 +2,7 @@ const express = require("express");
 const socket = require("socket.io");
 const rateLimit = require("express-rate-limit");
 
+const extractIdsAndNames = require("./utils/extractIdsAndNames.cjs");
 const handleAcceptInvite = require("./utils/handleAcceptInvite.cjs");
 const handleChat = require("./utils/handleChat.cjs");
 const handleClick = require("./utils/handleClick.cjs");
@@ -35,25 +36,31 @@ const io = socket(server);
 io.on("connection", function (socket) {
   console.log("Made socket connection");
 
-  socket.data.name = socket.handshake.query.name;
+  socket.data.name = socket.handshake.query.name; // Todo
 
-  const namesArray = [];
-  io.sockets.sockets.forEach((socket) =>
-    namesArray.push({ name: socket.data.name, id: socket.id })
-  );
-  io.emit("users", namesArray);
+  io.emit("users", extractIdsAndNames(io));
 
-  socket.on("disconnect", () => handleDisconnect(socket, io));
+  socket.on("disconnect", () => {
+    handleDisconnect(socket, io);
+  });
 
-  socket.on("invite", (id) => handleInvite(id, socket, io));
-  socket.on("acceptInvite", (id) =>
-    handleAcceptInvite(id, socket, io)
-  );
-  socket.on("inviteAgain", () => handleInviteAgain(socket, io));
+  socket.on("invite", (id) => {
+    handleInvite(id, socket, io);
+  });
 
-  socket.on("click", (cellIndex) =>
-    handleClick(cellIndex, socket, io)
-  );
+  socket.on("acceptInvite", (id) => {
+    handleAcceptInvite(id, socket, io);
+  });
 
-  socket.on("chat", (message) => handleChat(message, socket, io));
+  socket.on("inviteAgain", () => {
+    handleInviteAgain(socket, io);
+  });
+
+  socket.on("click", (cellIndex) => {
+    handleClick(cellIndex, socket, io);
+  });
+
+  socket.on("chat", (message) => {
+    handleChat(message, socket, io);
+  });
 });

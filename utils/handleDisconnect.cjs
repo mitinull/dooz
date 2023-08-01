@@ -1,9 +1,7 @@
+const extractIdsAndNames = require("./extractIdsAndNames.cjs");
+
 const handleDisconnect = (socket, io) => {
-  const disconnectedUserIndex = connectedUsers.findIndex(
-    (user) => user.id === socket.id
-  );
-  connectedUsers.splice(disconnectedUserIndex, 1);
-  io.emit("users", connectedUsers);
+  io.emit("users", extractIdsAndNames(io));
   console.log("disconnected");
 };
 
