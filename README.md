@@ -1,5 +1,5 @@
 # dooz
-Online tic-tac-toe game using Node.js Socket.io.
+Online tic-tac-toe game using Node.js and Socket.io.
 
 [🔗 Website (https://tictactoe.iran.liara.run/)](https://tictactoe.iran.liara.run/)
 
