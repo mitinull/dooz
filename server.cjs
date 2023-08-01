@@ -36,8 +36,6 @@ const io = socket(server);
 io.on("connection", function (socket) {
   console.log("Made socket connection");
 
-  socket.data.name = socket.handshake.query.name; // Todo
-
   io.emit("users", extractIdsAndNames(io));
 
   socket.on("disconnect", () => {

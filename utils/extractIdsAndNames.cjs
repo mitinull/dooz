@@ -1,6 +1,6 @@
 const extractIdsAndNames = (io) =>
   [...io.sockets.sockets.values()].map((socket) => ({
-    name: socket.data.name,
+    name: socket.handshake.query.name,
     id: socket.id,
   }));
 
