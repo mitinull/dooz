@@ -2,6 +2,13 @@ const express = require("express");
 const socket = require("socket.io");
 const rateLimit = require("express-rate-limit");
 
+const handleAcceptInvite = require("./utils/handleAcceptInvite.cjs");
+const handleChat = require("./utils/handleChat.cjs");
+const handleClick = require("./utils/handleClick.cjs");
+const handleDisconnect = require("./utils/handleDisconnect.cjs");
+const handleInvite = require("./utils/handleInvite.cjs");
+const handleInviteAgain = require("./utils/handleInviteAgain.cjs");
+
 const expressApp = express();
 
 const limiter = rateLimit({
@@ -19,8 +26,6 @@ expressApp.get("/", (req, res) => {
   res.render("room");
 });
 
-const connectedUsers = [];
-
 const server = expressApp.listen(3000, () => {
   console.log("express app is running on port 3000");
 });
@@ -29,79 +34,26 @@ const io = socket(server);
 
 io.on("connection", function (socket) {
   console.log("Made socket connection");
+
   socket.data.name = socket.handshake.query.name;
+
   const namesArray = [];
   io.sockets.sockets.forEach((socket) =>
     namesArray.push({ name: socket.data.name, id: socket.id })
   );
   io.emit("users", namesArray);
 
-  let i = 0;
-  socket.on("invite", (id) => {
-    console.log(socket.handshake.query.name, "invited", id);
-    console.log("Invite number:", ++i);
+  socket.on("disconnect", () => handleDisconnect(socket, io));
 
-    // Send a message to invitedUser
-    const invitedUserSocket = io.sockets.sockets.get(id);
-    if (!invitedUserSocket) return;
-    invitedUserSocket.emit("invite", {
-      name: socket.handshake.query.name,
-      id: socket.id,
-    });
-  });
+  socket.on("invite", (id) => handleInvite(id, socket, io));
+  socket.on("acceptInvite", (id) =>
+    handleAcceptInvite(id, socket, io)
+  );
+  socket.on("inviteAgain", () => handleInviteAgain(socket, io));
 
-  socket.on("acceptInvite", (id) => {
-    console.log(socket.handshake.query.name, "acceptInvited", id);
-    socket.data.opponentId = id;
+  socket.on("click", (cellIndex) =>
+    handleClick(cellIndex, socket, io)
+  );
 
-    const acceptInvitedUserSocket = io.sockets.sockets.get(id);
-    acceptInvitedUserSocket.data.opponentId = socket.id;
-
-    acceptInvitedUserSocket.emit("acceptInvite", {
-      name: socket.handshake.query.name,
-    });
-  });
-
-  socket.on("inviteAgain", () => {
-    const opponentSocket = io.sockets.sockets.get(
-      socket.data.opponentId
-    );
-    if (!opponentSocket) return;
-
-    opponentSocket.emit("invite", {
-      name: socket.handshake.query.name,
-      id: socket.id,
-    });
-  });
-
-  socket.on("disconnect", () => {
-    const disconnectedUserIndex = connectedUsers.findIndex(
-      (user) => user.id === socket.id
-    );
-    connectedUsers.splice(disconnectedUserIndex, 1);
-    io.emit("users", connectedUsers);
-    console.log("disconnected");
-  });
-
-  socket.on("click", (cellIndex) => {
-    if (!socket.data.opponentId) return;
-    const opponentSocket = io.sockets.sockets.get(
-      socket.data.opponentId
-    );
-    socket.emit("click", cellIndex);
-    opponentSocket.emit("click", cellIndex);
-  });
-
-  socket.on("chat", (message) => {
-    const opponentSocket = io.sockets.sockets.get(
-      socket.data.opponentId
-    );
-
-    if (!opponentSocket) return;
-
-    const formattedMessage =
-      `<b>${socket.handshake.query.name}:</b> ` + message;
-    socket.emit("chat", formattedMessage);
-    opponentSocket.emit("chat", formattedMessage);
-  });
+  socket.on("chat", (message) => handleChat(message, socket, io));
 });
