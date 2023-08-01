@@ -5,7 +5,7 @@ const rateLimit = require("express-rate-limit");
 const extractIdsAndNames = require("./utils/extractIdsAndNames.cjs");
 const handleAcceptInvite = require("./utils/handleAcceptInvite.cjs");
 const handleChat = require("./utils/handleChat.cjs");
-const handleClick = require("./utils/handleClick.cjs");
+const handleAction = require("./utils/handleAction.cjs");
 const handleDisconnect = require("./utils/handleDisconnect.cjs");
 const handleInvite = require("./utils/handleInvite.cjs");
 const handleInviteAgain = require("./utils/handleInviteAgain.cjs");
@@ -54,8 +54,8 @@ io.on("connection", function (socket) {
     handleInviteAgain(socket, io);
   });
 
-  socket.on("click", (cellIndex) => {
-    handleClick(cellIndex, socket, io);
+  socket.on("action", (cellIndex) => {
+    handleAction(cellIndex, socket, io);
   });
 
   socket.on("chat", (message) => {
