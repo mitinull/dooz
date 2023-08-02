@@ -5,10 +5,10 @@ import { gameState } from "../main.js";
 export const handleSocketAcceptInvite = (opponent) => {
   gameState.currentTurn = "O";
   gameState.opponentName = opponent.name;
-  alert(
-    `You're invite is accepted by "${opponent.name}". congrats!🎉`
-  );
   gameState.playerShape = "O";
   turnHeading.innerHTML = "Your Turn!";
   goToBoardPage();
+  alert(
+    `You're invite is accepted by "${opponent.name}". congrats!🎉`
+  );
 };
