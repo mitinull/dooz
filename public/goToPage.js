@@ -19,7 +19,7 @@ export const goToBoardPage = () => {
   gameState.gameIsOver = false;
   cells.forEach((cell) => {
     cell.textContent = "";
-    cell.style.background = "#111";
+    cell.style.background = null;
   });
   chatsContainer.innerHTML = "";
 };

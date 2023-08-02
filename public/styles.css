@@ -41,8 +41,10 @@ h1 {
   cursor: pointer;
 }
 
-.user button:hover {
-  background: #3333;
+@media (hover: hover) {
+  .user button:hover {
+    background: #3333;
+  }
 }
 
 .board-page {
@@ -73,6 +75,8 @@ h1 {
   display: block;
 }
 
-.cell:hover {
-  background: #333;
+@media (hover: hover) {
+  .cell:hover {
+    background: #333;
+  }
 }
