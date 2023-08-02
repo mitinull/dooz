@@ -13,6 +13,7 @@ import { handleSocketInvite } from "./handleSocket/handleSocketInvite.js";
 import { handleSocketAcceptInvite } from "./handleSocket/handleSocketAcceptInvite.js";
 import { handleSocketUsers } from "./handleSocket/handleSocketUsers.js";
 import { handleSocketAction } from "./handleSocket/handleSocketAction.js";
+import { changeName } from "./changeName.js";
 
 export const gameState = {
   playerShape: "",
@@ -22,8 +23,7 @@ export const gameState = {
 };
 
 if (!localStorage.getItem("name")) {
-  const name = prompt("Enter your beautiful name:");
-  localStorage.setItem("name", name);
+  changeName();
 }
 
 export const socket = io({
@@ -42,14 +42,22 @@ cells.forEach((cell, i) => {
   cell.addEventListener("click", () => handleAction(cell, i));
 });
 
-socket.on("chat", (message) => handleSocketChat(message));
+socket.on("chat", (message) => {
+  handleSocketChat(message);
+});
 
-socket.on("invite", (opponent) => handleSocketInvite(opponent));
+socket.on("invite", (opponent) => {
+  handleSocketInvite(opponent);
+});
 
-socket.on("acceptInvite", (opponent) =>
-  handleSocketAcceptInvite(opponent)
-);
+socket.on("acceptInvite", (opponent) => {
+  handleSocketAcceptInvite(opponent);
+});
 
-socket.on("users", (users) => handleSocketUsers(users));
+socket.on("users", (users) => {
+  handleSocketUsers(users);
+});
 
-socket.on("action", (cellIndex) => handleSocketAction(cellIndex));
+socket.on("action", (cellIndex) => {
+  handleSocketAction(cellIndex);
+});
