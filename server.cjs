@@ -34,7 +34,7 @@ const server = expressApp.listen(3000, () => {
 const io = socket(server);
 
 io.on("connection", function (socket) {
-  console.log("Made socket connection");
+  console.log(socket.handshake.query.name, "connected!");
 
   io.emit("users", extractIdsAndNames(io));
 
