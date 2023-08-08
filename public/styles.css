@@ -14,6 +14,28 @@ h1 {
   font-family: initial;
 }
 
+.source-code {
+  padding: 8px 16px;
+  border: 1px solid black;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  gap: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  font-size: large;
+}
+
+@media (hover: hover) {
+  .source-code:hover {
+    background: #3333;
+  }
+}
+
 .users {
   margin-top: 8px;
 }
